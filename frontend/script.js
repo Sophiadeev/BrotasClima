@@ -4,12 +4,17 @@
     Painel de monitoramento ambiental
 */
 
-// Dados de demonstração.
-// Depois vamos substituir por dados reais do ESP32 e da API.
+const URL_SERVIDOR = "https://brotasclima.onrender.com/dados";
+
+const LIMITE_ATENCAO = 30;
+const LIMITE_ALERTA = 35;
+
+// A Marginal continua com dados de demonstração.
+// O Calçadão será atualizado com a leitura do ESP32.
 const dadosLocais = {
     calcadao: {
-        temperatura: 36.5,
-        umidade: 45
+        temperatura: null,
+        umidade: null
     },
     marginal: {
         temperatura: 30.2,
@@ -17,12 +22,6 @@ const dadosLocais = {
     }
 };
 
-
-const LIMITE_ATENCAO = 30;
-const LIMITE_ALERTA = 35;
-
-
-// Mostra os dados de um local na tela.
 function atualizarLocal(nomeLocal, dados) {
     const temperatura = document.getElementById(
         `temperatura-${nomeLocal}`
@@ -36,107 +35,101 @@ function atualizarLocal(nomeLocal, dados) {
         `status-${nomeLocal}`
     );
 
+    if (!temperatura || !umidade || !status) return;
+
     if (dados.temperatura === null || dados.umidade === null) {
         temperatura.textContent = "-- °C";
         umidade.textContent = "-- %";
-        status.textContent = "Aguardando dados reais ou simulados.";
+        status.textContent = "Aguardando leitura do sensor.";
         return;
     }
 
     temperatura.textContent = `${dados.temperatura.toFixed(1)} °C`;
     umidade.textContent = `${dados.umidade.toFixed(1)} %`;
 
-    
-if (dados.temperatura >= LIMITE_ALERTA) {
-    status.textContent = "🔴 ALERTA: temperatura elevada!";
-} else if (dados.temperatura >= LIMITE_ATENCAO) {
-    status.textContent = "🟡 ATENÇÃO: temperatura em observação.";
-} else {
-    status.textContent = "🟢 NORMAL: temperatura abaixo do limite de atenção.";
+    if (dados.temperatura >= LIMITE_ALERTA) {
+        status.textContent = "🔴 ALERTA: temperatura elevada!";
+    } else if (dados.temperatura >= LIMITE_ATENCAO) {
+        status.textContent = "🟡 ATENÇÃO: temperatura em observação.";
+    } else {
+        status.textContent = "🟢 NORMAL: temperatura abaixo do limite de atenção.";
+    }
 }
 
-}
-
-// Compara as temperaturas quando existem dados dos dois locais.
 function compararLocais() {
     const resultado = document.getElementById("resultado-comparacao");
+
+    if (!resultado) return;
 
     const calcadao = dadosLocais.calcadao.temperatura;
     const marginal = dadosLocais.marginal.temperatura;
 
     if (calcadao === null || marginal === null) {
         resultado.textContent =
-            "A comparação será exibida quando os dois locais tiverem dados.";
+            "A comparação estará disponível quando houver dados dos dois locais.";
         return;
     }
 
-    
-const diferenca = Math.abs(calcadao - marginal).toFixed(1);
+    const diferenca = Math.abs(calcadao - marginal).toFixed(1);
 
-if (calcadao > marginal) {
-    resultado.textContent =
-        `☀️ O Calçadão está ${diferenca} °C mais quente que a Marginal. Essa diferença pode indicar a necessidade de investigar as condições ambientais dos dois locais.`;
-} else if (marginal > calcadao) {
-    resultado.textContent =
-        `🌡️ A Marginal está ${diferenca} °C mais quente que o Calçadão. Vale investigar as condições ambientais dos dois locais.`;
-} else {
-    resultado.textContent =
-        "🌿 Os dois locais apresentam a mesma temperatura registrada.";
+    if (calcadao > marginal) {
+        resultado.textContent =
+            `☀️ A leitura do sensor do Calçadão está ${diferenca} °C acima do valor de demonstração da Marginal.`;
+    } else if (marginal > calcadao) {
+        resultado.textContent =
+            `🌡️ O valor de demonstração da Marginal está ${diferenca} °C acima da leitura do sensor do Calçadão.`;
+    } else {
+        resultado.textContent =
+            "As duas temperaturas exibidas estão iguais, mas a Marginal usa dados de demonstração.";
+    }
 }
 
-}
-
-// Atualiza a informação de horário do painel.
-function atualizarHorario() {
-    const elemento = document.getElementById("atualizacao");
-
-    elemento.textContent =
-        "Painel iniciado. Aguardando conexão com os dados.";
-}
-
-// Inicializa a página.
-function iniciarPainel() {
-    atualizarLocal("calcadao", dadosLocais.calcadao);
-    atualizarLocal("marginal", dadosLocais.marginal);
-    compararLocais();
-    atualizarHorario();
-}
-
-iniciarPainel();
-
-async function buscarClimaAPI() {
-    const url = "https://api.open-meteo.com/v1/forecast?latitude=-22.28&longitude=-48.13&current=temperature_2m,relative_humidity_2m&timezone=America%2FSao_Paulo";
-
+async function buscarDadosSensor() {
     const atualizacao = document.getElementById("atualizacao");
 
     try {
-        atualizacao.textContent = "Buscando dados da API...";
+        atualizacao.textContent = "Buscando leitura do sensor ESP32...";
 
-        const resposta = await fetch(url);
+        const resposta = await fetch(URL_SERVIDOR, {
+            cache: "no-store"
+        });
 
         if (!resposta.ok) {
-            throw new Error("Não foi possível consultar a API.");
+            throw new Error("Não foi possível consultar o servidor.");
         }
 
         const dados = await resposta.json();
 
-        const temperatura = dados.current.temperature_2m;
-        const umidade = dados.current.relative_humidity_2m;
+        if (
+            typeof dados.temperatura !== "number" ||
+            typeof dados.umidade !== "number"
+        ) {
+            throw new Error("O servidor ainda não possui uma leitura válida.");
+        }
+
+        dadosLocais.calcadao.temperatura = dados.temperatura;
+        dadosLocais.calcadao.umidade = dados.umidade;
+
+        atualizarLocal("calcadao", dadosLocais.calcadao);
+        atualizarLocal("marginal", dadosLocais.marginal);
+        compararLocais();
+
+        const horario = dados.atualizadoEm
+            ? new Date(dados.atualizadoEm).toLocaleString("pt-BR")
+            : "horário indisponível";
 
         atualizacao.textContent =
-            `Clima regional de Brotas atualizado: ${temperatura} °C e ${umidade}% de umidade.`;
-
-        console.log("Dados recebidos da Open-Meteo:", dados);
+            `Sensor ESP32 atualizado em ${horario}. A Marginal apresenta dados de demonstração.`;
 
     } catch (erro) {
         atualizacao.textContent =
-            "Não foi possível carregar os dados da API. Verifique sua conexão.";
+            "Não foi possível carregar a leitura do ESP32. Verifique se o sensor está enviando dados.";
 
-        console.error("Erro ao consultar a API:", erro);
+        console.error("Erro ao consultar o servidor:", erro);
     }
 }
 
-buscarClimaAPI();
-// Atualiza os dados da API a cada 5 minutos.
-setInterval(buscarClimaAPI, 5 * 60 * 1000);
+buscarDadosSensor();
 
+// Consulta o servidor a cada 5 segundos.
+setInterval(buscarDadosSensor, 5000);
