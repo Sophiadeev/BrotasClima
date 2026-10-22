@@ -1,0 +1,10 @@
+
+{
+  "name": "brotas-clima",
+  "version": "1.0.0",
+  "description": "Servidor do projeto IoT Brotas Clima",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  }
+}
