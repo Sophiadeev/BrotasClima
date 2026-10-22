@@ -8,6 +8,7 @@ let ultimaLeitura = {
 };
 
 const servidor = http.createServer((req, res) => {
+    const caminho = new URL(req.url, "http://localhost").pathname;
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -17,7 +18,7 @@ const servidor = http.createServer((req, res) => {
         return res.end();
     }
 
-    if (req.method === "POST" && req.url === "/dados") {
+    if (req.method === "POST" && caminho === "/dados") {
         let corpo = "";
 
         req.on("data", parte => {
@@ -61,7 +62,7 @@ const servidor = http.createServer((req, res) => {
         return;
     }
 
-    if (req.method === "GET" && req.url === "/dados") {
+    if (req.method === "GET" && caminho === "/dados") {
         res.writeHead(200, {
             "Content-Type": "application/json"
         });
