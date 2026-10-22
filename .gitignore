@@ -1,0 +1,16 @@
+
+# Arquivos temporários
+.DS_Store
+Thumbs.db
+*.log
+
+# Configurações locais
+.vscode/
+
+# Arquivos com segredos
+.env
+.env.*
+!.env.example
+
+# Dependências, caso sejam adicionadas futuramente
+node_modules/

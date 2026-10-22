@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brotas Clima</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>🌳 Brotas Clima</h1>
+        <p>Monitoramento de temperatura e umidade em Brotas - SP</p>
+    </header>
+
+    <main>
+        <section class="introducao">
+            <h2>Como está o clima nos espaços públicos?</h2>
+            <p>
+                Acompanhe as informações climáticas e compare as
+                condições dos diferentes locais da cidade.
+            </p>
+        </section>
+
+        <section class="locais">
+            <article class="card">
+                <h2>☀️ Calçadão do Centro</h2>
+                <p>Av. Mário Pinotti</p>
+
+                <div class="dado">
+                    <span>Temperatura</span>
+                    <strong id="temperatura-calcadao">-- °C</strong>
+                </div>
+
+                <div class="dado">
+                    <span>Umidade</span>
+                    <strong id="umidade-calcadao">-- %</strong>
+                </div>
+
+                <p id="status-calcadao" class="status">
+                    Aguardando dados...
+                </p>
+            </article>
+
+            <article class="card">
+                <h2>🌲 Marginal</h2>
+                <p>Av. Lorival Jaubert da Silva Braga</p>
+
+                <div class="dado">
+                    <span>Temperatura</span>
+                    <strong id="temperatura-marginal">-- °C</strong>
+                </div>
+
+                <div class="dado">
+                    <span>Umidade</span>
+                    <strong id="umidade-marginal">-- %</strong>
+                </div>
+
+                <p id="status-marginal" class="status">
+                    Aguardando dados...
+                </p>
+            </article>
+        </section>
+
+        <section class="comparacao">
+            <h2>📊 Comparação dos locais</h2>
+            <p id="resultado-comparacao">
+                A comparação aparecerá quando houver dados disponíveis.
+            </p>
+        </section>
+
+        <section class="fonte">
+            <p id="atualizacao">Dados ainda não carregados.</p>
+            <p>Projeto educacional de monitoramento ambiental.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>Desenvolvido por alunos do SENAI São Paulo</p>
+        <p>Brotas Clima © 2026</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="testes.js"></script>
+</body>
+</html>

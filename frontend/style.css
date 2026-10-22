@@ -1,0 +1,149 @@
+
+/* Configurações gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f7f2;
+    color: #263b30;
+    line-height: 1.6;
+}
+
+/* Cabeçalho */
+header {
+    background: linear-gradient(135deg, #14532d, #27834a);
+    color: white;
+    text-align: center;
+    padding: 35px 20px;
+}
+
+header h1 {
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+
+header p {
+    font-size: 16px;
+}
+
+/* Conteúdo principal */
+main {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.introducao {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.introducao h2 {
+    color: #17643a;
+    margin-bottom: 10px;
+}
+
+/* Cartões dos locais */
+.locais {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border-top: 5px solid #27834a;
+}
+
+.card h2 {
+    color: #17643a;
+    margin-bottom: 5px;
+}
+
+.card > p:first-of-type {
+    color: #68766c;
+    margin-bottom: 20px;
+}
+
+/* Temperatura e umidade */
+.dado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid #e3ebe5;
+}
+
+.dado span {
+    color: #526258;
+}
+
+.dado strong {
+    font-size: 24px;
+    color: #17643a;
+}
+
+/* Status dos locais */
+.status {
+    margin-top: 18px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #edf7ee;
+    color: #17643a;
+    font-weight: bold;
+}
+
+/* Comparação */
+.comparacao {
+    background-color: white;
+    margin-top: 28px;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.comparacao h2 {
+    color: #17643a;
+    margin-bottom: 10px;
+}
+
+/* Informações finais */
+.fonte {
+    text-align: center;
+    color: #68766c;
+    font-size: 13px;
+    margin: 25px 0;
+}
+
+/* Rodapé */
+footer {
+    background-color: #173c29;
+    color: white;
+    text-align: center;
+    padding: 22px;
+    margin-top: 35px;
+    font-size: 14px;
+}
+
+/* Adaptação para celulares */
+@media (max-width: 700px) {
+    header h1 {
+        font-size: 29px;
+    }
+
+    .locais {
+        grid-template-columns: 1fr;
+    }
+
+    .dado strong {
+        font-size: 21px;
+    }
+}
